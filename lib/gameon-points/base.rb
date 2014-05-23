@@ -17,17 +17,18 @@ GameOn::Env.register do
 end
 
 module GameOn
-  class Points
+  class Points  < GameOn::Middleware 
     def initialize(app, opts={},params={})
       @app = app
+      @opts = opts 
       @params = params
     end
     def call(env)
-      if @params.has_key?(:add) 
-	env[:gameon].add_points @params[:add] 
+      if !@params.nil? && @params.has_key?(:add)
+	env[:gameon].add_points(@params[:add] * @opts[:inc_by]) 
       end
-      if @params.has_key?(:remove) 
-	env[:gameon].remove_points @params[:remove] 
+      if !@params.nil? && @params.has_key?(:remove) 
+	env[:gameon].remove_points(@params[:remove] * @opts[:dec_by]) 
       end
       @app.call(env) # run the next middleware
     end

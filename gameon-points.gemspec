@@ -1,6 +1,10 @@
+# -*- encoding: utf-8 -*-
+lib = File.expand_path('../lib/', __FILE__)
+$:.unshift lib unless $:.include?(lib)
+
 Gem::Specification.new do |spec|
   spec.name          = "gameon-points"
-  spec.version       = "0.0.0.pre1" 
+  spec.version       = "0.0.0.pre7" 
   spec.authors       = ["theotherstupidguy"]
   spec.email         = ["theotherstupidguy@gmail.com"]
   spec.summary       = "simple points system for gameon" 
@@ -8,8 +12,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/gameon-rb/gameon-points"
   spec.license       = "MIT"
 
-  spec.files         = ["lib/gameon-points.rb"]
-
-  spec.add_development_dependency "gameon", "0.0.0.pre1"
-  spec.add_development_dependency "gameon-redis", "0.0.0.pre1"
+  spec.files         = Dir.glob("{lib}/**/*") 
+  spec.add_development_dependency "gameon" 
+  spec.add_development_dependency "gameon-redis"
 end
