@@ -4,7 +4,7 @@ $:.unshift lib unless $:.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "gameon-points"
-  spec.version       = "0.0.0.pre7" 
+  spec.version       = "0.0.0.pre17" 
   spec.authors       = ["theotherstupidguy"]
   spec.email         = ["theotherstupidguy@gmail.com"]
   spec.summary       = "simple points system for gameon" 
@@ -13,6 +13,6 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
 
   spec.files         = Dir.glob("{lib}/**/*") 
-  spec.add_development_dependency "gameon" 
-  spec.add_development_dependency "gameon-redis"
+  #spec.add_development_dependency "gameon" 
+  #spec.add_development_dependency "gameon-redis"
 end
