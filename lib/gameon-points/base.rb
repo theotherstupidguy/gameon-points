@@ -1,20 +1,20 @@
-  GameOn::Env.register do
-    attr_accessor :points
-    def add_points value
-      if !@points.nil?
-	@points = @points + value
-      else 
-	@points = 0
-      end
-    end
-    def remove_points value
-      if !@points.nil?
-	@points = @points - value
-      else 
-	@points = 0
-      end
+GameOn::Env.register do
+  attr_accessor :points
+  def add_points value
+    if !@points.nil?
+      @points = @points + value
+    else 
+      @points = 0
     end
   end
+  def remove_points value
+    if !@points.nil?
+      @points = @points - value
+    else 
+      @points = 0
+    end
+  end
+end
 
 module GameOn
   class Points  
@@ -28,7 +28,6 @@ module GameOn
     def call(env)
       if !@params.nil? && @params.has_key?(:add)
 	env[:gameon].add_points(@params[:add] * @opts[:inc_by]) 
-	#p "the Env variable " + env
 	#env[:gameon].points = GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
 	#GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
       end
