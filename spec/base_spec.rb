@@ -1,11 +1,10 @@
 require_relative './spec_helper'
 
-describe "a Ruby Application 'GoMaster' that applies DDD 2.0" do
+describe "a a generic Ruby Application 'GoMaster' that applies DDD 2.0" do
   before do
     @app_key = "secret_key used by domain frameworks for encryptions"
     @user_id = "07"
   end
-
 
   it 'is a GameOn Middleware' do
     GameOn::Points.include?(GameOn::Middleware).must_equal true
@@ -157,6 +156,38 @@ describe "a Ruby Application 'GoMaster' that applies DDD 2.0" do
 
     @gameon = GameOn::Env.get @user_id 
     @gameon.id.must_equal @user_id + "gameon"
+  end
+
+  after do 
+    redis = Redis.new
+    redis.del @user_id + 'gameon' 
+  end
+
+end
+
+#
+########################### Sinatra ############################
+#
+
+describe "a sinatra web application" do 
+  before do
+    @app_key = "secret_key used by domain frameworks for encryptions"
+    @user_id = "01"
+  end
+
+  include Rack::Test::Methods
+
+  def app
+    Sinatra::Application
+  end
+
+  it "should successfully return the user's Points" do
+    5.times do 
+      get "/good/#{@user_id}"
+    end
+      last_response.must_be :ok?
+      last_response.body.must_include "#{@user_id+'gameon'}:"
+      last_response.body.must_equal "#{@user_id+'gameon'}: #{10}" 
   end
 
   after do 

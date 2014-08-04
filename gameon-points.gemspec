@@ -4,7 +4,7 @@ $:.unshift lib unless $:.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "gameon-points"
-  spec.version       = "0.0.0.pre20" 
+  spec.version       = "0.0.0.pre22" 
   spec.authors       = ["theotherstupidguy"]
   spec.email         = ["theotherstupidguy@gmail.com"]
   spec.summary       = "simple points system for gameon" 
