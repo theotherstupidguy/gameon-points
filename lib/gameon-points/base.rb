@@ -1,5 +1,7 @@
 GameOn::Env.register do
   attr_accessor :points
+  @mutex = Mutex.new
+  @mutex.synchronize { 
   def add_points value
     if @points.nil?
       @points = value
@@ -9,11 +11,14 @@ GameOn::Env.register do
   end
   def remove_points value
     if @points.nil?
-      @points = -(value)
+      p "- value"
+      @points = -value
     else
-      @points += -(value)
+      p "- points"
+      @points -= value
     end
   end
+  }
 end
 
 module GameOn

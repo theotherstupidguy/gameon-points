@@ -6,10 +6,6 @@ describe "a Ruby Application 'GoMaster' that applies DDD 2.0" do
     @user_id = "07"
   end
 
-  after do 
-    redis = Redis.new
-    redis.del @user_id + 'gameon' 
-  end
 
   it 'is a GameOn Middleware' do
     GameOn::Points.include?(GameOn::Middleware).must_equal true
@@ -26,11 +22,11 @@ describe "a Ruby Application 'GoMaster' that applies DDD 2.0" do
     module GoMaster 
       module Gamebook 
 	extend GameOn::DSL
-	points = {:inc_by => 2, :dec_by => 1 }
+	opts = {:inc_by => 2, :dec_by => 1 }
 
 	context :good_mayor do 
 	  statment [:user, :visits, :good_page_one] do 
-	    activation GameOn::Points, points, GameOn::Points::Params[:addition] 
+	    activation GameOn::Points, opts, GameOn::Points::Params[:addition] 
 	  end
 	end
       end
@@ -45,16 +41,16 @@ describe "a Ruby Application 'GoMaster' that applies DDD 2.0" do
     @gameon.points.must_equal 2 * 2 * 5 
   end
 
-  
+
   it 'adds points using {:add => 2}' do 
     module GoMaster 
       module Gamebook 
 	extend GameOn::DSL
-	points = {:inc_by => 1, :dec_by => 1 }
+	opts = {:inc_by => 1, :dec_by => 1 }
 
 	context :good_mayor do 
 	  statment [:user, :visits, :good_page_two] do 
-	    activation GameOn::Points, points, {:add => 2}
+	    activation GameOn::Points, opts, {:add => 2}
 	  end
 	end
       end
@@ -92,7 +88,7 @@ describe "a Ruby Application 'GoMaster' that applies DDD 2.0" do
     @gameon.points.must_equal -2 * 2 
   end
 
-  it 'removes points using {:subtraction => 2}' do 
+  it 'removes points using {:remove => 2}' do 
     module GoMaster 
       module Gamebook 
 	extend GameOn::DSL
@@ -115,14 +111,57 @@ describe "a Ruby Application 'GoMaster' that applies DDD 2.0" do
     @gameon.points.must_equal -2 
   end
 
+  it 'adds & removes points using {add => 10} and {:remove => 2}' do 
+    #skip
+    module GoMaster 
+      module Gamebook 
+	extend GameOn::DSL
+	opts = {:inc_by => 1, :dec_by => 1} #or GameOn::Points::Opts[:opt_1] =  {:inc_by => 2, :dec_by => 1 }
+
+	context :good_mayor do 
+	  statment [:user, :visits, :good_page_three] do 
+	    activation GameOn::Points, opts, {:add => 10} 
+	  end
+	end
+
+	context :bad_mayor do 
+	  statment [:user, :visits, :bad_page_three] do 
+	    activation GameOn::Points, opts, {:remove => 2}
+	  end
+	end
+      end
+    end
+
+    #TODO only one context per set for now, must be fixed in the mushin gem
+    GameOn::Env.set @user_id do 
+      on :bad_mayor do 
+	activity [:user, :visits, :bad_page_three]
+      end
+    end
+    GameOn::Env.set @user_id do 
+      on :good_mayor do 
+	activity [:user, :visits, :good_page_three]
+      end
+    end
+
+    @gameon = GameOn::Env.get @user_id 
+    @gameon.points.must_equal 8 
+  end
+
   it 'sets & gets a GameOn #id' do 
     GameOn::Env.set @user_id do 
       on :good_mayor do 
-	activity [:user, :visits, :good_page_two]
+	activity [:user, :visits, :good_page_three]
       end
     end
 
     @gameon = GameOn::Env.get @user_id 
     @gameon.id.must_equal @user_id + "gameon"
   end
+
+  after do 
+    redis = Redis.new
+    redis.del @user_id + 'gameon' 
+  end
+
 end
