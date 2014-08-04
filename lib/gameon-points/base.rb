@@ -11,10 +11,8 @@ GameOn::Env.register do
   end
   def remove_points value
     if @points.nil?
-      p "- value"
       @points = -value
     else
-      p "- points"
       @points -= value
     end
   end
@@ -32,15 +30,18 @@ module GameOn
     end
 
     def call(env)
-      if !@params.nil? && @params.has_key?(:add)
-	env[:gameon].add_points(@params[:add] * @opts[:inc_by]) 
-	#env[:gameon].points = GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
-	#GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
+      t = Thread.new do     
+	if !@params.nil? && @params.has_key?(:add)
+	  env[:gameon].add_points(@params[:add] * @opts[:inc_by]) 
+	  #env[:gameon].points = GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
+	  #GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
+	end
+	if !@params.nil? && @params.has_key?(:remove) 
+	  env[:gameon].remove_points(@params[:remove] * @opts[:dec_by]) 
+	end
+	@app.call(env) # run the next middleware
       end
-      if !@params.nil? && @params.has_key?(:remove) 
-	env[:gameon].remove_points(@params[:remove] * @opts[:dec_by]) 
-      end
-      @app.call(env) # run the next middleware
+      t.join
     end
   end
 end
