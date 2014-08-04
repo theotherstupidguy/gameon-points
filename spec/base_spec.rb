@@ -35,12 +35,14 @@ describe "a Ruby Application 'GoMaster' that applies DDD 2.0" do
 	end
       end
     end
-    @gameon = GameOn::Env.set @user_id do 
-      on :good_mayor do 
-	activity [:user, :visits, :good_page_one]
+    5.times do 
+      @gameon = GameOn::Env.set @user_id do 
+	on :good_mayor do 
+	  activity [:user, :visits, :good_page_one]
+	end
       end
     end
-    @gameon.points.must_equal 2 * 2 
+    @gameon.points.must_equal 2 * 2 * 5 
   end
 
   
@@ -57,14 +59,15 @@ describe "a Ruby Application 'GoMaster' that applies DDD 2.0" do
 	end
       end
     end
-
-    @gameon = GameOn::Env.set @user_id do 
-      on :good_mayor do 
-	activity [:user, :visits, :good_page_two]
+    5.times do 
+      @gameon = GameOn::Env.set @user_id do 
+	on :good_mayor do 
+	  activity [:user, :visits, :good_page_two]
+	end
       end
     end
 
-    @gameon.points.must_equal 2 
+    @gameon.points.must_equal 2 * 5 
   end
 
   it 'removes points using GameOn::Points::Params[:subtraction]' do 
