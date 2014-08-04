@@ -182,7 +182,7 @@ describe "a sinatra web application" do
   end
 
   it "should successfully return the user's Points" do
-    5.times do 
+    10.times do 
       get "/good/#{@user_id}"
     end
       last_response.must_be :ok?

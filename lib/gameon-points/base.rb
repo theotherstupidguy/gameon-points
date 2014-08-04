@@ -1,22 +1,13 @@
 GameOn::Env.register do
-  @mutex = Mutex.new
-  @mutex.synchronize { 
-    attr_accessor :points
-  }
+  attr_accessor :points
+
   def add_points value
-      if @points.nil?
-	@points = value
-      else
-	@points += value
-      end
-    end
-    def remove_points value
-      if @points.nil?
-	@points = -value
-      else
-	@points -= value
-      end
-    end
+    (@points.nil?) ? (@points = value) : (@points += value) 
+  end
+
+  def remove_points value
+    (@points.nil?) ? (@points = -value) : (@points -= value) 
+  end
 end
 
 module GameOn
@@ -30,18 +21,15 @@ module GameOn
     end
 
     def call(env)
-      t = Thread.new do     
-	if !@opts.nil? && !@params.nil? && @params.has_key?(:add)
-	  env[:gameon].add_points(@params[:add] * @opts[:inc_by]) 
-	  #env[:gameon].points = GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
-	  #GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
-	end
-	if !@opts.nil? && !@params.nil? && @params.has_key?(:remove) 
-	  env[:gameon].remove_points(@params[:remove] * @opts[:dec_by]) 
-	end
-	@app.call(env) # run the next middleware
+      if !@opts.nil? && !@params.nil? && @params.has_key?(:add)
+	env[:gameon].add_points(@params[:add] * @opts[:inc_by]) 
+	#env[:gameon].points = GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
+	#GameOn::Env.add_points(@params[:add] * @opts[:inc_by]) 
       end
-      t.join
+      if !@opts.nil? && !@params.nil? && @params.has_key?(:remove) 
+	env[:gameon].remove_points(@params[:remove] * @opts[:dec_by]) 
+      end
+      @app.call(env) # run the next middleware
     end
   end
 end
